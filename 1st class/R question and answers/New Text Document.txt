@@ -1,0 +1,65 @@
+Process (more or less change basis on a problem, but its generic) to follow for modeling:
+
+1)  Gather the data: (From CSV, Databases etc)
+
+
+2) Read the data using read.csv / read_csv/ fread/readRDS etc..
+
+
+3) Analyse the business problem, determine if there is any dependent variable present. 
+In case of unavailability of direct dependent variable ask for derivation by someone from business( This person will always be there , they are called BA-business analyst)
+
+
+4) Once you are clear with the dependent variable definition, analyse other variables, such as how many are numeric, how many are character, 
+are there any variables which should be numeric but present as character( In case you find these kind of variables then change them accordingly).
+
+
+5) Create a Data Quality assessment report basis the availability of data:
+      a) This should contain : Number of rows, Number of character variables, Number of numeric variables, mean, median, 25th percentile, 50th percentile, 75percentile, min and max of numeric variables, frequency of character variables,
+number of missing values and outlers if present in the data.
+
+      b) In case of outlier present in data, use: mean + 3*sigma to determine those, any value fall in between mean - 3*sigma and mean + 3*sigma is fine, 
+others are outlier, another way of calculation of an outlier is to use 1.5*IQR from boxplot. 
+Ideally you should fix your outliers first before imputing missing values( although there is no such set of rules present, 
+but this is what industry does: https://stackoverflow.com/questions/12866189/calculating-the-outliers-in-r )
+
+      c)  In case of replacing missing values, you can replace it with mean or median but replacement of median is more robust and is more common
+
+
+
+6) Once you have treated your data, you can generate a data quality assessment to see if you forgotten any thing, or any malformed information coming (this can happen due to erroneous coding or performing the operations in a wrong way).
+Also you need to create/cleanse new variables basis the existing information of variables, for examples if a sales value is given for four quarters, create variable of ratios, %change etc
+
+
+
+7) Now your data is clean and suitable for your modeling, Bifurcate the data into train-test or train-test-validation whatever suits you. some times people have out of time validation as well( More on this later in the class).
+
+
+
+8) After splitting the data, Run a basic model by capturing all the independent variables (once you understand these are variables are useful for solving that problem, 
+please don't use garage inforamtion), a fit will be generated , 
+Use VIF to get the variable inflation factor, 
+In case of Higher vif > 5 is present in the data, 
+then remove those variables iteratively (Never at once).  
+Once you removed the multicollinearity from the data, 
+Perform a stepwise/backward or forward regression to get final set of variables ( This process is useful to get best results with few number of variables, stepwise performance is best in the all the three), once you found the last step from wise, 
+use the variables used in the final step to rerun the regression
+
+
+
+9) After running the regression, check for significance of variables, most of the time you will see all the variables are significant,
+ but if any variable found to be insignificant then drop it. 
+Also check for adjusted R squared and F test value ( for coefficient of determination and significance of regression ), 
+In case if p value is insignifcant then you have to perform another set of regression with some new variables. otherwise, you are good to go ahead
+
+
+
+10) Last step is to validate the assumptions of linear regression by showing the fit plots.
+
+
+
+11) If all the fit plots are coming okay then score the test and see if RMSE are consistent across train and test.
+
+
+
+12 ) Now we can safely score the validation set ( unseen data) and submit the score basis on that.
